@@ -1,12 +1,16 @@
 /* App frame: mobile shell centers in bnpl-ecommerce.jsx (max-width 390px) */
 html {
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   min-height: 100dvh;
-  background: #dfe6f2;
+  background: linear-gradient(165deg, #E0E8F4 0%, #E8EEF6 50%, #F0F4FA 100%);
+  font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -17,4 +21,19 @@ body {
   justify-content: center;
   align-items: stretch;
   box-sizing: border-box;
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible para accesibilidad */
+:focus-visible {
+  outline: 2px solid #0066E6;
+  outline-offset: 2px;
 }

@@ -1,43 +1,87 @@
 import { useState, useEffect } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
-   DESIGN TOKENS
+   DESIGN TOKENS — Optimizado para mejor jerarquia visual
 ═══════════════════════════════════════════════════════════════ */
 const T = {
+  // Paleta azul principal
   blue:      "#0066E6",
   blueMid:   "#0052B8",
   blueDeep:  "#003D8A",
   blueInk:   "#021C4A",
+  blueLight: "#E8F4FF",
+  
+  // Acento dorado
   yellow:    "#F5B800",
   yellowDim: "#D9A000",
+  yellowLight: "#FFF8E6",
 
-  bg:        "#EEF2F9",
+  // Superficies
+  bg:        "#F0F4FA",
   surface:   "#FFFFFF",
-  surfaceAlt:"#F4F6FA",
-  overlay:   "rgba(2,28,74,0.52)",
+  surfaceAlt:"#F7F9FC",
+  surfaceHover: "#FAFBFD",
+  overlay:   "rgba(2,28,74,0.55)",
 
-  ink:       "#0B1220",
-  body:      "#3D4654",
-  sub:       "#64708B",
-  ghost:     "#94A3B8",
+  // Texto - mejor contraste
+  ink:       "#0A1628",
+  body:      "#3A4455",
+  sub:       "#5C6B82",
+  ghost:     "#8E9DB5",
+  muted:     "#B8C4D6",
 
-  green:     "#7C3AED",
-  greenBg:   "#F5F0FF",
-  amber:     "#0047AB",
-  amberBg:   "#FFF8EB",
-  red:       "#E11D48",
+  // Estados semanticos
+  accent:    "#7C3AED",
+  accentBg:  "#F5F0FF",
+  success:   "#059669",
+  successBg: "#ECFDF5",
+  warning:   "#D97706",
+  warningBg: "#FFFBEB",
+  error:     "#DC2626",
+  errorBg:   "#FEF2F2",
 
+  // Bordes
   line:      "#E2E8F0",
   lineLight: "#F1F5F9",
+  lineDark:  "#CBD5E1",
 
-  shadowXs:  "0 1px 2px rgba(15,23,42,0.04)",
-  shadowSm:  "0 2px 8px rgba(15,23,42,0.06)",
-  shadowMd:  "0 8px 24px rgba(15,23,42,0.08)",
-  shadowLg:  "0 16px 48px rgba(15,23,42,0.12)",
-  ring:      "0 0 0 3px rgba(0,102,230,0.25)",
+  // Sombras refinadas
+  shadowXs:  "0 1px 2px rgba(10,22,40,0.04)",
+  shadowSm:  "0 2px 6px rgba(10,22,40,0.05), 0 1px 2px rgba(10,22,40,0.03)",
+  shadowMd:  "0 4px 16px rgba(10,22,40,0.08), 0 2px 4px rgba(10,22,40,0.04)",
+  shadowLg:  "0 12px 40px rgba(10,22,40,0.12), 0 4px 12px rgba(10,22,40,0.06)",
+  shadowXl:  "0 20px 60px rgba(10,22,40,0.16), 0 8px 20px rgba(10,22,40,0.08)",
+  ring:      "0 0 0 3px rgba(0,102,230,0.22)",
+  ringAccent:"0 0 0 3px rgba(124,58,237,0.22)",
+  
+  // Elevaciones especificas
+  cardShadow: "0 1px 3px rgba(10,22,40,0.06), 0 1px 2px rgba(10,22,40,0.04)",
+  navShadow:  "0 -4px 20px rgba(10,22,40,0.08), 0 -1px 4px rgba(10,22,40,0.04)",
 };
 
-const R = { xs:"8px", sm:"12px", md:"16px", lg:"20px", xl:"24px", xxl:"32px", full:"999px" };
+// Radios consistentes
+const R = { 
+  xs: "6px", 
+  sm: "10px", 
+  md: "14px", 
+  lg: "18px", 
+  xl: "22px", 
+  xxl: "28px", 
+  full: "9999px" 
+};
+
+// Espaciado base (multiplos de 4)
+const S = {
+  1: "4px",
+  2: "8px",
+  3: "12px",
+  4: "16px",
+  5: "20px",
+  6: "24px",
+  8: "32px",
+  10: "40px",
+  12: "48px",
+};
 
 /* ═══════════════════════════════════════════════════════════════
    DATA
@@ -85,15 +129,26 @@ function Stars({ n }) {
   );
 }
 
-function Badge({ children, bg="#E8F0FE", color="#1A56DB" }) {
+function Badge({ children, bg="#E8F0FE", color="#1A56DB", size="sm" }) {
+  const sizes = {
+    xs: { fontSize: "9px", padding: "3px 8px" },
+    sm: { fontSize: "10px", padding: "4px 10px" },
+    md: { fontSize: "11px", padding: "5px 12px" },
+  };
+  const s = sizes[size] || sizes.sm;
   return (
     <span style={{
-      display:"inline-flex",alignItems:"center",
-      background:bg, color, fontSize:"10px", fontWeight:"600",
-      padding:"4px 10px", borderRadius:R.full,
-      letterSpacing:"0.02em", whiteSpace:"nowrap",
-      border:`1px solid ${color}18`,
+      display:"inline-flex",alignItems:"center",gap:"4px",
+      background:bg, color, 
+      fontSize: s.fontSize, 
+      fontWeight:"600",
+      padding: s.padding, 
+      borderRadius:R.full,
+      letterSpacing:"0.03em", 
+      whiteSpace:"nowrap",
+      border:`1px solid ${color}14`,
       boxShadow:T.shadowXs,
+      transition:"all 0.15s ease",
     }}>{children}</span>
   );
 }
@@ -132,9 +187,63 @@ function Radio({ active, color=T.blue }) {
   );
 }
 
-function PrimaryButton({ children, onClick, color=T.blue, style={} }) {
+function PrimaryButton({ children, onClick, color=T.blue, size="lg", disabled=false, style={} }) {
   const [hover, setHover] = useState(false);
   const [down, setDown] = useState(false);
+  
+  const sizes = {
+    sm: { padding: "10px 18px", fontSize: "13px", borderRadius: R.lg },
+    md: { padding: "12px 20px", fontSize: "14px", borderRadius: R.xl },
+    lg: { padding: "14px 24px", fontSize: "15px", borderRadius: R.full },
+  };
+  const s = sizes[size] || sizes.lg;
+  
+  return (
+    <button
+      type="button"
+      onClick={disabled ? undefined : onClick}
+      onMouseEnter={()=>!disabled && setHover(true)}
+      onMouseLeave={()=>{ setHover(false); setDown(false); }}
+      onMouseDown={()=>!disabled && setDown(true)}
+      onMouseUp={()=>setDown(false)}
+      disabled={disabled}
+      style={{
+        width:"100%", 
+        border:"none", 
+        borderRadius: s.borderRadius,
+        padding: s.padding, 
+        fontSize: s.fontSize, 
+        fontWeight:"700",
+        letterSpacing:"0.01em", 
+        cursor: disabled ? "not-allowed" : "pointer", 
+        fontFamily:"inherit",
+        background: disabled 
+          ? T.lineDark
+          : `linear-gradient(145deg, ${color} 0%, ${color}E8 100%)`,
+        color: disabled ? T.ghost : "#fff",
+        boxShadow: disabled ? "none" : hover
+          ? `0 6px 20px ${color}35, 0 0 0 1px rgba(255,255,255,0.15) inset`
+          : `0 3px 12px ${color}28, 0 0 0 1px rgba(255,255,255,0.1) inset`,
+        transform: down ? "scale(0.98)" : hover ? "translateY(-2px)" : "none",
+        transition:"all 0.18s cubic-bezier(0.4,0,0.2,1)",
+        opacity: disabled ? 0.7 : 1,
+        ...style,
+      }}
+    >{children}</button>
+  );
+}
+
+function GhostButton({ children, onClick, color=T.blue, size="lg" }) {
+  const [hover, setHover] = useState(false);
+  const [down, setDown] = useState(false);
+  
+  const sizes = {
+    sm: { padding: "10px 18px", fontSize: "13px", borderRadius: R.lg },
+    md: { padding: "12px 20px", fontSize: "14px", borderRadius: R.xl },
+    lg: { padding: "14px 24px", fontSize: "15px", borderRadius: R.full },
+  };
+  const s = sizes[size] || sizes.lg;
+  
   return (
     <button
       type="button"
@@ -144,92 +253,114 @@ function PrimaryButton({ children, onClick, color=T.blue, style={} }) {
       onMouseDown={()=>setDown(true)}
       onMouseUp={()=>setDown(false)}
       style={{
-        width:"100%", border:"none", borderRadius:R.full,
-        padding:"15px 24px", fontSize:"15px", fontWeight:"600",
-        letterSpacing:"0.01em", cursor:"pointer", fontFamily:"inherit",
-        background:`linear-gradient(145deg, ${color} 0%, ${color}EB 100%)`,
-        color:"#fff",
-        boxShadow: hover
-          ? `${T.shadowMd}, 0 0 0 1px rgba(255,255,255,0.12) inset`
-          : `${T.shadowSm}, 0 0 0 1px rgba(255,255,255,0.08) inset`,
-        transform: down ? "scale(0.98)" : hover ? "translateY(-1px)" : "none",
-        transition:"transform 0.15s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s ease",
-        ...style,
-      }}
-    >{children}</button>
-  );
-}
-
-function GhostButton({ children, onClick }) {
-  const [hover, setHover] = useState(false);
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      onMouseEnter={()=>setHover(true)}
-      onMouseLeave={()=>setHover(false)}
-      style={{
-        width:"100%", border:`1.5px solid ${hover ? T.blue + "55" : T.line}`,
-        borderRadius:R.full, padding:"15px 24px",
-        fontSize:"15px", fontWeight:"600", letterSpacing:"0.01em",
-        cursor:"pointer", fontFamily:"inherit",
-        background: hover ? `${T.blue}08` : T.surface,
-        color: hover ? T.blueDeep : T.ink,
-        boxShadow: hover ? T.shadowSm : T.shadowXs,
-        transition:"all 0.2s cubic-bezier(0.4,0,0.2,1)",
+        width:"100%", 
+        border:`1.5px solid ${hover ? color + "50" : T.line}`,
+        borderRadius: s.borderRadius, 
+        padding: s.padding,
+        fontSize: s.fontSize, 
+        fontWeight:"700", 
+        letterSpacing:"0.01em",
+        cursor:"pointer", 
+        fontFamily:"inherit",
+        background: hover ? `${color}06` : T.surface,
+        color: hover ? color : T.ink,
+        boxShadow: hover ? `0 2px 8px ${color}12` : T.shadowXs,
+        transform: down ? "scale(0.98)" : "none",
+        transition:"all 0.18s cubic-bezier(0.4,0,0.2,1)",
       }}>{children}</button>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   LAYOUT SHELL
+   LAYOUT SHELL — Contenedor principal optimizado
 ═══════════════════════════════════════════════════════════════ */
 function Shell({ children, noPad=false }) {
   return (
     <div style={{
-      maxWidth:"390px", margin:"0 auto",
+      maxWidth:"390px", 
+      margin:"0 auto",
       width:"100%",
-      height:"100dvh", maxHeight:"100dvh",
-      background:`linear-gradient(165deg, #E4EBF7 0%, ${T.bg} 28%, ${T.bg} 100%)`,
-      position:"relative", overflowX:"hidden",
+      height:"100dvh", 
+      maxHeight:"100dvh",
+      background:`linear-gradient(172deg, #E6ECF6 0%, ${T.bg} 20%, ${T.bg} 100%)`,
+      position:"relative", 
+      overflowX:"hidden",
       overflowY:"hidden",
-      display:"flex", flexDirection:"column",
+      display:"flex", 
+      flexDirection:"column",
       minHeight:0,
-      fontFamily:"'Outfit', system-ui, -apple-system, sans-serif",
+      fontFamily:"'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+      WebkitFontSmoothing:"antialiased",
+      MozOsxFontSmoothing:"grayscale",
+      textRendering:"optimizeLegibility",
     }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Outfit:wght@400;500;600;700&display=swap');
-        *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=Outfit:wght@400;500;600;700;800&display=swap');
+        
+        *, *::before, *::after { 
+          box-sizing:border-box; 
+          margin:0; 
+          padding:0; 
+        }
+        
         ::-webkit-scrollbar { width:0; height:0; }
-        input, button, textarea { font-family: inherit; }
-        button:focus-visible { outline: none; box-shadow: ${T.ring}; }
-        input:focus-visible { outline: 2px solid ${T.blue}; outline-offset: 2px; }
-        ::selection { background: ${T.blue}33; color: ${T.ink}; }
-        .hnp-search::placeholder { color: rgba(255,255,255,0.52); opacity: 1; }
+        
+        html { 
+          -webkit-tap-highlight-color: transparent;
+          scroll-behavior: smooth;
+        }
+        
+        input, button, textarea, select { 
+          font-family: inherit; 
+          -webkit-appearance: none;
+        }
+        
+        button { touch-action: manipulation; }
+        
+        button:focus-visible { 
+          outline: none; 
+          box-shadow: ${T.ring}; 
+        }
+        
+        input:focus-visible { 
+          outline: 2px solid ${T.blue}; 
+          outline-offset: 2px; 
+        }
+        
+        ::selection { 
+          background: ${T.blue}28; 
+          color: ${T.ink}; 
+        }
+        
+        .hnp-search::placeholder { 
+          color: rgba(255,255,255,0.5); 
+          opacity: 1; 
+        }
 
+        /* Animaciones optimizadas */
         @keyframes fadeUp {
-          from { opacity:0; transform:translateY(16px); }
+          from { opacity:0; transform:translateY(14px); }
           to   { opacity:1; transform:translateY(0); }
         }
         @keyframes fadeIn {
           from { opacity:0; } to { opacity:1; }
         }
         @keyframes slideUp {
-          from { transform:translateY(100%); }
-          to   { transform:translateY(0); }
+          from { transform:translateY(100%); opacity:0; }
+          to   { transform:translateY(0); opacity:1; }
         }
         @keyframes cartRoll {
-          from { opacity:0; transform:translateX(-40px) rotate(-8deg); }
+          from { opacity:0; transform:translateX(-36px) rotate(-6deg); }
           to   { opacity:1; transform:translateX(0) rotate(0deg); }
         }
         @keyframes bounce {
           0%,100% { transform:translateY(0); }
-          40%     { transform:translateY(-14px); }
-          70%     { transform:translateY(-6px); }
+          40%     { transform:translateY(-12px); }
+          70%     { transform:translateY(-5px); }
         }
         @keyframes sparkPop {
-          0%   { opacity:0; transform:scale(0) rotate(-20deg); }
-          70%  { opacity:1; transform:scale(1.15) rotate(10deg); }
+          0%   { opacity:0; transform:scale(0) rotate(-15deg); }
+          70%  { opacity:1; transform:scale(1.12) rotate(8deg); }
           100% { opacity:1; transform:scale(1) rotate(0deg); }
         }
         @keyframes roadMove {
@@ -237,40 +368,55 @@ function Shell({ children, noPad=false }) {
           to   { background-position:-60px 0; }
         }
         @keyframes pulse {
-          0%,100% { opacity:1; } 50% { opacity:0.6; }
+          0%,100% { opacity:1; } 50% { opacity:0.55; }
         }
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
         @keyframes kycScan {
-          0%   { top: 15%; opacity:0; }
+          0%   { top: 12%; opacity:0; }
           10%  { opacity:1; }
           90%  { opacity:1; }
-          100% { top: 85%; opacity:0; }
+          100% { top: 88%; opacity:0; }
         }
         @keyframes popIn {
-          0%   { transform:scale(0.85); opacity:0; }
-          60%  { transform:scale(1.06); }
-          100% { transform:scale(1);   opacity:1; }
+          0%   { transform:scale(0.88); opacity:0; }
+          60%  { transform:scale(1.04); }
+          100% { transform:scale(1); opacity:1; }
         }
         @keyframes slideDown {
-          from { opacity:0; transform:translateY(-8px); }
+          from { opacity:0; transform:translateY(-10px); }
           to   { opacity:1; transform:translateY(0); }
         }
-        .anim-pop      { animation: popIn    0.22s cubic-bezier(0.34,1.56,0.64,1) both; }
-        .anim-slide-dn { animation: slideDown 0.2s ease both; }
-
-        .anim-fade-up  { animation:fadeUp 0.4s ease both; }
-        .anim-fade-in  { animation:fadeIn 0.3s ease both; }
-        .anim-cart     { animation:cartRoll 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
-        .anim-bounce   { animation:bounce 1.6s ease-in-out infinite; }
-        .anim-spark    { animation:sparkPop 0.5s ease both; }
-        .anim-road     { animation:roadMove 0.5s linear infinite; }
-        .delay-1       { animation-delay:0.1s; }
-        .delay-2       { animation-delay:0.2s; }
-        .delay-3       { animation-delay:0.35s; }
-        .delay-4       { animation-delay:0.5s; }
-        .delay-5       { animation-delay:0.65s; }
+        @keyframes shimmer {
+          0%   { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        @keyframes navPop {
+          0%   { transform: scale(0.92); }
+          50%  { transform: scale(1.08); }
+          100% { transform: scale(1); }
+        }
+        
+        .anim-pop      { animation: popIn 0.24s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .anim-slide-dn { animation: slideDown 0.22s ease both; }
+        .anim-fade-up  { animation: fadeUp 0.38s ease both; }
+        .anim-fade-in  { animation: fadeIn 0.28s ease both; }
+        .anim-cart     { animation: cartRoll 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .anim-bounce   { animation: bounce 1.8s ease-in-out infinite; }
+        .anim-spark    { animation: sparkPop 0.45s ease both; }
+        .anim-road     { animation: roadMove 0.5s linear infinite; }
+        .anim-shimmer  { 
+          background: linear-gradient(90deg, ${T.line} 25%, ${T.lineLight} 50%, ${T.line} 75%);
+          background-size: 200% 100%;
+          animation: shimmer 1.5s ease-in-out infinite; 
+        }
+        
+        .delay-1 { animation-delay: 0.08s; }
+        .delay-2 { animation-delay: 0.16s; }
+        .delay-3 { animation-delay: 0.28s; }
+        .delay-4 { animation-delay: 0.42s; }
+        .delay-5 { animation-delay: 0.56s; }
       `}</style>
       {children}
     </div>
@@ -278,37 +424,43 @@ function Shell({ children, noPad=false }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BOTTOM NAV
+   BOTTOM NAV — Navegacion inferior optimizada
 ═══════════════════════════════════════════════════════════════ */
 function BottomNav({ active="home", onNavTap }) {
   const items = [
-    { id:"home",  label:"Inicio",        icon:<HomeIcon/> },
-    { id:"favs",  label:"Tus productos", icon:<HeartIcon/> },
-    { id:"search",label:"Explorar",      icon:<SearchIcon/> },
-    { id:"perks", label:"Beneficios",    icon:<GridIcon/> },
-    { id:"acct",  label:"Cuenta",        icon:<PersonIcon/> },
+    { id:"home",  label:"Inicio",     icon:<HomeIcon/> },
+    { id:"favs",  label:"Productos",  icon:<HeartIcon/> },
+    { id:"search",label:"Explorar",   icon:<SearchIcon/> },
+    { id:"perks", label:"Beneficios", icon:<GridIcon/> },
+    { id:"acct",  label:"Cuenta",     icon:<PersonIcon/> },
   ];
+  
   return (
     <nav
       role="navigation"
-      aria-label="Principal"
+      aria-label="Navegacion principal"
       style={{
-        position:"sticky", bottom:0, zIndex:50,
+        position:"sticky", 
+        bottom:0, 
+        zIndex:50,
         flexShrink:0,
-        padding:"0 12px calc(10px + env(safe-area-inset-bottom, 0px)) 12px",
+        padding:`0 ${S[3]} calc(8px + env(safe-area-inset-bottom, 0px)) ${S[3]}`,
+        background: `linear-gradient(180deg, transparent 0%, ${T.bg}40 30%, ${T.bg} 100%)`,
+        paddingTop: S[2],
       }}
     >
       <div style={{
-        display:"grid", gridTemplateColumns:"repeat(5,1fr)",
+        display:"flex",
         alignItems:"stretch",
-        minHeight:"58px",
-        padding:"6px 4px",
-        background:"rgba(255,255,255,0.78)",
-        WebkitBackdropFilter:"blur(20px) saturate(160%)",
-        backdropFilter:"blur(20px) saturate(160%)",
-        border:`1px solid rgba(255,255,255,0.85)`,
+        justifyContent:"space-around",
+        minHeight:"60px",
+        padding:"8px 6px",
+        background:"rgba(255,255,255,0.88)",
+        WebkitBackdropFilter:"blur(24px) saturate(180%)",
+        backdropFilter:"blur(24px) saturate(180%)",
+        border:`1px solid rgba(255,255,255,0.92)`,
         borderRadius:R.xl,
-        boxShadow:`${T.shadowMd}, 0 1px 0 rgba(255,255,255,0.9) inset`,
+        boxShadow:`${T.navShadow}, 0 1px 0 rgba(255,255,255,0.95) inset`,
       }}>
         {items.map(it => {
           const on = active === it.id;
@@ -317,24 +469,50 @@ function BottomNav({ active="home", onNavTap }) {
               key={it.id}
               type="button"
               onClick={()=>onNavTap?.(it.id)}
+              aria-current={on ? "page" : undefined}
               style={{
-                display:"flex", flexDirection:"column",
-                alignItems:"center", justifyContent:"center",
-                gap:"2px",
-                padding:"6px 2px",
+                display:"flex", 
+                flexDirection:"column",
+                alignItems:"center", 
+                justifyContent:"center",
+                gap:"3px",
+                padding:"6px 10px",
                 margin:0,
                 border:"none",
                 borderRadius:R.md,
                 cursor:"pointer",
                 fontFamily:"inherit",
-                background: on ? `linear-gradient(180deg, ${T.blue}12, ${T.blue}06)` : "transparent",
+                background: on 
+                  ? `linear-gradient(180deg, ${T.blue}14, ${T.blue}08)` 
+                  : "transparent",
                 color: on ? T.blue : T.ghost,
-                boxShadow: on ? `inset 0 0 0 1px ${T.blue}22` : "none",
-                transition:"background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease",
+                boxShadow: on 
+                  ? `inset 0 0 0 1px ${T.blue}18, 0 1px 3px ${T.blue}08` 
+                  : "none",
+                transform: on ? "scale(1)" : "scale(1)",
+                transition:"all 0.2s cubic-bezier(0.4,0,0.2,1)",
+                minWidth:"56px",
+                flex:"0 0 auto",
               }}
             >
-              <span style={{display:"flex",color:"inherit",opacity:on?1:0.85}}>{it.icon}</span>
-              <span style={{fontSize:"9px", fontWeight:on?"600":"500", letterSpacing:"0.02em", lineHeight:1.2, textAlign:"center"}}>
+              <span style={{
+                display:"flex",
+                alignItems:"center",
+                justifyContent:"center",
+                color:"inherit",
+                transform: on ? "scale(1.08)" : "scale(1)",
+                transition:"transform 0.2s ease",
+              }}>
+                {it.icon}
+              </span>
+              <span style={{
+                fontSize:"10px", 
+                fontWeight: on ? "700" : "500", 
+                letterSpacing:"0.01em", 
+                lineHeight:1.2, 
+                textAlign:"center",
+                whiteSpace:"nowrap",
+              }}>
                 {it.label}
               </span>
             </button>
@@ -366,194 +544,357 @@ function HomeScreen({ onProduct, onCreditLanding, totalCredit, cartCount }) {
   return (
     <div style={{minHeight:"100%"}}>
 
-      {/* ── Top bar ── */}
+      {/* ── Top bar — Header principal optimizado ── */}
       <div style={{
-        background:`linear-gradient(155deg, ${T.blueInk} 0%, ${T.blueDeep} 48%, ${T.blueMid} 100%)`,
-        padding:"0 20px 2px",
-        borderRadius:`0 0 ${R.xl} ${R.xl}`,
-        boxShadow:T.shadowMd,
+        background:`linear-gradient(158deg, ${T.blueInk} 0%, ${T.blueDeep} 55%, ${T.blueMid} 100%)`,
+        padding:"0 18px 0",
+        borderRadius:`0 0 ${R.xxl} ${R.xxl}`,
+        boxShadow:`${T.shadowLg}, 0 4px 20px ${T.blueInk}35`,
       }}>
         {/* Greeting row */}
         <div style={{
-          display:"flex", justifyContent:"space-between",
-          alignItems:"center", paddingTop:"16px", paddingBottom:"12px",
+          display:"flex", 
+          justifyContent:"space-between",
+          alignItems:"center", 
+          paddingTop:"18px", 
+          paddingBottom:"14px",
         }}>
           <div>
-            <p style={{fontSize:"12px", color:"rgba(255,255,255,0.55)", marginBottom:"2px", letterSpacing:"0.3px"}}>
-              ¡Hola, Said! 👋
+            <p style={{
+              fontSize:"11px", 
+              color:"rgba(255,255,255,0.5)", 
+              marginBottom:"4px", 
+              letterSpacing:"0.4px",
+              fontWeight:"500",
+            }}>
+              Hola, Said
             </p>
-            <div style={{display:"flex", alignItems:"center", gap:"6px"}}>
-              <span style={{fontFamily:"'Fraunces',serif", fontSize:"22px", color:"#fff", fontStyle:"italic", lineHeight:1}}>NP</span>
-              <Spark size={18} color={T.yellow}/>
+            <div style={{display:"flex", alignItems:"center", gap:"7px"}}>
+              <span style={{
+                fontFamily:"'Fraunces',serif", 
+                fontSize:"24px", 
+                color:"#fff", 
+                fontStyle:"italic", 
+                lineHeight:1,
+                fontWeight:"600",
+              }}>NP</span>
+              <Spark size={16} color={T.yellow}/>
             </div>
           </div>
-          <div style={{position:"relative", cursor:"pointer"}}>
+          <button 
+            type="button"
+            style={{
+              position:"relative", 
+              cursor:"pointer",
+              background:"none",
+              border:"none",
+              padding:0,
+            }}
+            aria-label={`Carrito${cartCount > 0 ? `, ${cartCount} productos` : ''}`}
+          >
             <div style={{
-              width:"40px", height:"40px", borderRadius:"50%",
+              width:"42px", 
+              height:"42px", 
+              borderRadius:"50%",
               background:"rgba(255,255,255,0.1)",
-              border:"1.5px solid rgba(255,255,255,0.2)",
-              display:"flex", alignItems:"center", justifyContent:"center",
+              border:"1.5px solid rgba(255,255,255,0.18)",
+              display:"flex", 
+              alignItems:"center", 
+              justifyContent:"center",
+              transition:"all 0.2s ease",
             }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.88)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
             </div>
             {cartCount > 0 && (
               <div style={{
-                position:"absolute", top:"-3px", right:"-3px",
-                background:T.yellow, borderRadius:"50%",
-                width:"18px", height:"18px",
-                display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:"10px", fontWeight:"800", color:T.blueInk,
-                border:"2px solid transparent",
+                position:"absolute", 
+                top:"-2px", 
+                right:"-2px",
+                background:`linear-gradient(135deg, ${T.yellow} 0%, #FFB800 100%)`,
+                borderRadius:"50%",
+                minWidth:"20px", 
+                height:"20px",
+                padding:"0 4px",
+                display:"flex", 
+                alignItems:"center", 
+                justifyContent:"center",
+                fontSize:"11px", 
+                fontWeight:"800", 
+                color:T.blueInk,
+                boxShadow:`0 2px 6px ${T.yellow}50`,
               }}>{cartCount}</div>
             )}
-          </div>
+          </button>
         </div>
 
         {/* Search */}
         <div style={{
-          display:"flex", alignItems:"center", gap:"10px",
-          background:"rgba(255,255,255,0.12)",
-          backdropFilter:"blur(12px)",
-          border:"1.5px solid rgba(255,255,255,0.18)",
-          borderRadius:R.lg, padding:"11px 14px",
+          display:"flex", 
+          alignItems:"center", 
+          gap:"12px",
+          background:"rgba(255,255,255,0.1)",
+          backdropFilter:"blur(16px)",
+          WebkitBackdropFilter:"blur(16px)",
+          border:"1.5px solid rgba(255,255,255,0.15)",
+          borderRadius:R.lg, 
+          padding:"12px 16px",
           marginBottom:"14px",
+          transition:"all 0.2s ease",
         }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           <input
             className="hnp-search"
-            value={q} onChange={e=>setQ(e.target.value)}
-            placeholder="Buscar productos, marcas…"
+            value={q} 
+            onChange={e=>setQ(e.target.value)}
+            placeholder="Buscar productos, marcas..."
             style={{
-              flex:1, background:"transparent", border:"none",
-              outline:"none", fontSize:"14px", color:"#fff",
+              flex:1, 
+              background:"transparent", 
+              border:"none",
+              outline:"none", 
+              fontSize:"14px", 
+              color:"#fff",
+              fontWeight:"400",
             }}
           />
         </div>
 
         {/* Delivery bar */}
         <div style={{
-          display:"flex", alignItems:"center", justifyContent:"space-between",
-          background:"rgba(16,185,129,0.16)",
-          border:"1px solid rgba(52,211,153,0.35)",
-          borderRadius:R.md, padding:"10px 14px",
+          display:"flex", 
+          alignItems:"center", 
+          justifyContent:"space-between",
+          background:"rgba(16,185,129,0.14)",
+          border:"1px solid rgba(52,211,153,0.3)",
+          borderRadius:R.md, 
+          padding:"11px 14px",
           marginBottom:"14px",
+          cursor:"pointer",
         }}>
-          <div style={{display:"flex", alignItems:"center", gap:"8px"}}>
-            <span style={{fontSize:"15px"}}>📦</span>
-            <span style={{fontSize:"12px", color:"rgba(255,255,255,0.92)", fontWeight:"500"}}>Elige cómo recibir tu pedido</span>
+          <div style={{display:"flex", alignItems:"center", gap:"10px"}}>
+            <span style={{fontSize:"16px", lineHeight:1}}>📦</span>
+            <span style={{
+              fontSize:"12px", 
+              color:"rgba(255,255,255,0.9)", 
+              fontWeight:"500",
+              letterSpacing:"0.01em",
+            }}>Elige como recibir tu pedido</span>
           </div>
-          <span style={{color:"rgba(255,255,255,0.85)", display:"flex"}}><ChevDown/></span>
+          <span style={{color:"rgba(255,255,255,0.7)", display:"flex"}}><ChevDown/></span>
         </div>
 
         {/* Tab strip */}
         <div style={{
-          display:"flex", gap:"8px",
+          display:"flex", 
+          gap:"8px",
           overflowX:"auto",
-          paddingBottom:"14px",
+          paddingBottom:"16px",
           scrollbarWidth:"none",
+          msOverflowStyle:"none",
         }}>
-          {["Ahorros","Súper","Flash Deals","Sin TDC"].map((tab,i) => (
+          {["Ahorros","Super","Flash Deals","Sin TDC"].map((tab,i) => (
             <div key={tab} style={{
-              padding:"8px 16px",
+              padding:"9px 16px",
               borderRadius:R.full,
-              background: i===3 ? "rgba(245,184,0,0.2)" : "rgba(255,255,255,0.1)",
-              border: i===3 ? `1px solid ${T.yellow}66` : "1px solid rgba(255,255,255,0.14)",
-              color: i===3 ? T.yellow : "rgba(255,255,255,0.72)",
-              fontSize:"12px", fontWeight: i===3 ? "600" : "500",
-              whiteSpace:"nowrap", cursor:"pointer",
-              letterSpacing:"0.01em",
+              background: i===3 ? "rgba(245,184,0,0.18)" : "rgba(255,255,255,0.08)",
+              border: i===3 ? `1px solid ${T.yellow}55` : "1px solid rgba(255,255,255,0.12)",
+              color: i===3 ? T.yellow : "rgba(255,255,255,0.7)",
+              fontSize:"12px", 
+              fontWeight: i===3 ? "700" : "500",
+              whiteSpace:"nowrap", 
+              cursor:"pointer",
+              letterSpacing:"0.02em",
               backdropFilter:"blur(8px)",
+              transition:"all 0.2s ease",
             }}>{tab}</div>
           ))}
         </div>
       </div>
 
-      {/* ── Credit hero banner ── */}
-      <div style={{padding:"16px 16px 0"}}>
+      {/* ── Credit hero banner — Optimizado ── */}
+      <div style={{padding:"18px 16px 0"}}>
         <div
           onClick={onCreditLanding}
+          role="button"
+          tabIndex={0}
+          onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); onCreditLanding(); } }}
           style={{
-          background:`linear-gradient(135deg, ${T.blueInk} 0%, ${T.blueDeep} 100%)`,
-          borderRadius:R.xl, padding:"20px",
-          position:"relative", overflow:"hidden",
-          boxShadow:T.shadowLg,
-          cursor:"pointer",
-        }}>
-          <div style={{position:"absolute",top:"-30px",right:"-20px",width:"120px",height:"120px",borderRadius:"50%",background:`radial-gradient(circle, ${T.yellow}28 0%, transparent 70%)`}}/>
-          <div style={{position:"absolute",bottom:"-20px",right:"60px",width:"80px",height:"80px",borderRadius:"50%",background:"rgba(255,255,255,0.04)"}}/>
+            background:`linear-gradient(140deg, ${T.blueInk} 0%, ${T.blueDeep} 65%, ${T.blueMid} 100%)`,
+            borderRadius:R.xl, 
+            padding:"22px 20px",
+            position:"relative", 
+            overflow:"hidden",
+            boxShadow:`${T.shadowLg}, 0 8px 32px ${T.blueInk}40`,
+            cursor:"pointer",
+            transition:"transform 0.2s ease, box-shadow 0.2s ease",
+          }}>
+          {/* Decorative elements */}
+          <div style={{position:"absolute",top:"-35px",right:"-25px",width:"130px",height:"130px",borderRadius:"50%",background:`radial-gradient(circle, ${T.yellow}22 0%, transparent 65%)`}}/>
+          <div style={{position:"absolute",bottom:"-25px",right:"55px",width:"90px",height:"90px",borderRadius:"50%",background:"rgba(255,255,255,0.03)"}}/>
+          <div style={{position:"absolute",top:"50%",left:"-20px",width:"60px",height:"60px",borderRadius:"50%",background:"rgba(255,255,255,0.02)"}}/>
 
           <div style={{position:"relative",zIndex:1}}>
-            <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"8px"}}>
-              <Spark size={12} color={T.yellow}/>
-              <span style={{fontSize:"10px",color:T.yellow,letterSpacing:"1.5px",fontWeight:"700"}}>CASHI · SIN TARJETA DE CRÉDITO</span>
+            <div style={{display:"flex",alignItems:"center",gap:"7px",marginBottom:"10px"}}>
+              <Spark size={11} color={T.yellow}/>
+              <span style={{
+                fontSize:"9px",
+                color:T.yellow,
+                letterSpacing:"1.8px",
+                fontWeight:"700",
+                textTransform:"uppercase",
+              }}>Cashri · Sin tarjeta de credito</span>
             </div>
-            <p style={{fontFamily:"'Fraunces',serif",fontSize:"22px",color:"#fff",lineHeight:1.2,fontStyle:"italic",marginBottom:"4px"}}>
-              Llévalo hoy,<br/>págalo después
+            <p style={{
+              fontFamily:"'Fraunces',serif",
+              fontSize:"24px",
+              color:"#fff",
+              lineHeight:1.2,
+              fontStyle:"italic",
+              marginBottom:"6px",
+              fontWeight:"500",
+            }}>
+              Llevalo hoy,<br/>pagalo despues
             </p>
-            <p style={{fontSize:"12px",color:"rgba(255,255,255,0.55)",marginBottom:"14px"}}>
+            <p style={{
+              fontSize:"13px",
+              color:"rgba(255,255,255,0.55)",
+              marginBottom:"16px",
+              lineHeight:1.4,
+            }}>
               Hasta {mxn(totalCredit)} disponibles · sin banco ni papeleos
             </p>
             <div style={{
-              display:"inline-flex", alignItems:"center", gap:"6px",
-              background:T.yellow, color:T.blueInk,
-              borderRadius:R.full, padding:"7px 16px",
-              fontSize:"12px", fontWeight:"800",
+              display:"inline-flex", 
+              alignItems:"center", 
+              gap:"7px",
+              background:`linear-gradient(135deg, ${T.yellow} 0%, #FFBE00 100%)`,
+              color:T.blueInk,
+              borderRadius:R.full, 
+              padding:"9px 18px",
+              fontSize:"12px", 
+              fontWeight:"800",
+              boxShadow:`0 4px 14px ${T.yellow}40`,
+              letterSpacing:"0.02em",
             }}>
-              <Spark size={11} color={T.blueInk}/>
-              Úsalo ahora
+              <Spark size={10} color={T.blueInk}/>
+              Usalo ahora
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── Coupon strip ── */}
-      <div style={{padding:"12px 16px 0"}}>
+      {/* ── Coupon strip — Optimizado ── */}
+      <div style={{padding:"14px 16px 0"}}>
         <div style={{
-          display:"grid", gridTemplateColumns:"1fr 1fr", gap:"8px",
+          display:"grid", 
+          gridTemplateColumns:"1fr 1fr", 
+          gap:"10px",
         }}>
-          {[["$225","WS225SPRING","Compra mín. $1,500","amber"],["$360","WS360SPRING","Compra mín. $1,800","blue"]].map(([amt,code,cond,variant])=>(
+          {[
+            ["$225","WS225SPRING","Compra min. $1,500","amber"],
+            ["$360","WS360SPRING","Compra min. $1,800","blue"]
+          ].map(([amt,code,cond,variant])=>(
             <div key={code} style={{
               background: variant==="amber"
-                ? `linear-gradient(135deg, ${T.yellow} 0%, #FFB800 100%)`
-                : `linear-gradient(135deg, ${T.blue} 0%, ${T.blueDeep} 100%)`,
-              borderRadius:R.lg, padding:"14px",
+                ? `linear-gradient(140deg, ${T.yellow} 0%, #FFBE00 100%)`
+                : `linear-gradient(140deg, ${T.blue} 0%, ${T.blueDeep} 100%)`,
+              borderRadius:R.lg, 
+              padding:"16px 14px",
               color: variant==="amber" ? T.blueInk : "#fff",
+              boxShadow: variant==="amber" 
+                ? `0 4px 16px ${T.yellow}30`
+                : `0 4px 16px ${T.blue}25`,
+              cursor:"pointer",
+              transition:"transform 0.2s ease",
             }}>
-              <p style={{fontSize:"10px",opacity:0.65,marginBottom:"2px",letterSpacing:"0.3px"}}>Ahorro Inmediato</p>
-              <p style={{fontFamily:"'Fraunces',serif",fontSize:"26px",fontStyle:"italic",lineHeight:1,marginBottom:"6px"}}>{amt}</p>
+              <p style={{
+                fontSize:"10px",
+                opacity:0.6,
+                marginBottom:"4px",
+                letterSpacing:"0.4px",
+                fontWeight:"500",
+              }}>Ahorro Inmediato</p>
+              <p style={{
+                fontFamily:"'Fraunces',serif",
+                fontSize:"28px",
+                fontStyle:"italic",
+                lineHeight:1,
+                marginBottom:"8px",
+                fontWeight:"600",
+              }}>{amt}</p>
               <div style={{
                 display:"inline-block",
                 background: variant==="amber" ? T.blue : T.yellow,
                 color: variant==="amber" ? "#fff" : T.blueInk,
-                fontSize:"9px", fontWeight:"800",
-                padding:"2px 7px", borderRadius:R.full,
-                marginBottom:"4px", letterSpacing:"0.5px",
+                fontSize:"9px", 
+                fontWeight:"800",
+                padding:"3px 8px", 
+                borderRadius:R.full,
+                marginBottom:"6px", 
+                letterSpacing:"0.6px",
               }}>{code}</div>
-              <p style={{fontSize:"10px",opacity:0.55}}>{cond}</p>
+              <p style={{
+                fontSize:"10px",
+                opacity:0.55,
+                lineHeight:1.3,
+              }}>{cond}</p>
             </div>
           ))}
         </div>
 
+        {/* Express delivery banner */}
         <div style={{
-          background:T.surface, borderRadius:R.md,
-          padding:"12px 16px", marginTop:"10px",
-          display:"flex", alignItems:"center", justifyContent:"center", gap:"10px",
+          background:T.surface, 
+          borderRadius:R.md,
+          padding:"13px 16px", 
+          marginTop:"12px",
+          display:"flex", 
+          alignItems:"center", 
+          justifyContent:"center", 
+          gap:"12px",
           border:`1px solid ${T.line}`,
-          boxShadow:T.shadowSm,
+          boxShadow:T.cardShadow,
         }}>
-          <span style={{fontSize:"15px"}}>⚡</span>
-          <span style={{fontSize:"12px",color:T.body,fontWeight:"600"}}>Envío Express</span>
-          <span style={{fontSize:"12px",color:T.sub}}>Hasta en 60 minutos</span>
+          <span style={{fontSize:"16px", lineHeight:1}}>⚡</span>
+          <span style={{fontSize:"13px",color:T.ink,fontWeight:"700"}}>Envio Express</span>
+          <span style={{
+            width:"4px",
+            height:"4px",
+            borderRadius:"50%",
+            background:T.ghost,
+          }}/>
+          <span style={{fontSize:"12px",color:T.sub,fontWeight:"500"}}>Hasta en 60 min</span>
         </div>
       </div>
 
-      {/* ── Section header ── */}
+      {/* ── Section header — Optimizado ── */}
       <div style={{
-        display:"flex", justifyContent:"space-between",
-        alignItems:"baseline", padding:"20px 20px 12px",
+        display:"flex", 
+        justifyContent:"space-between",
+        alignItems:"center", 
+        padding:"22px 18px 14px",
       }}>
-        <h2 style={{fontSize:"17px",fontWeight:"800",color:T.ink,letterSpacing:"-0.3px"}}>Tus productos</h2>
-        <span style={{fontSize:"13px",color:T.blue,fontWeight:"600",cursor:"pointer"}}>Ver más →</span>
+        <h2 style={{
+          fontSize:"18px",
+          fontWeight:"800",
+          color:T.ink,
+          letterSpacing:"-0.3px",
+        }}>Tus productos</h2>
+        <button 
+          type="button"
+          style={{
+            fontSize:"13px",
+            color:T.blue,
+            fontWeight:"600",
+            cursor:"pointer",
+            background:"none",
+            border:"none",
+            padding:"4px 8px",
+            margin:"-4px -8px",
+            borderRadius:R.sm,
+            transition:"background 0.15s ease",
+          }}
+        >Ver mas</button>
       </div>
 
       {/* ── Product grid ── */}
@@ -573,6 +914,8 @@ function HomeScreen({ onProduct, onCreditLanding, totalCredit, cartCount }) {
 function ProductTile({ p, onTap }) {
   const saved = p.orig - p.price;
   const [hover, setHover] = useState(false);
+  const discountPct = saved > 0 ? pct(p.price, p.orig) : 0;
+  
   return (
     <div
       onClick={onTap}
@@ -583,78 +926,188 @@ function ProductTile({ p, onTap }) {
       onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); onTap(); } }}
       style={{
         background:T.surface,
-        padding:"12px",
+        padding:"14px",
         cursor:"pointer",
         borderRadius:R.lg,
-        border:`1px solid ${hover ? T.blue + "33" : T.line}`,
-        boxShadow: hover ? T.shadowMd : T.shadowSm,
-        transform: hover ? "translateY(-3px)" : "none",
-        transition:"transform 0.22s cubic-bezier(0.4,0,0.2,1), box-shadow 0.22s ease, border-color 0.2s ease",
+        border:`1.5px solid ${hover ? T.blue + "30" : T.line}`,
+        boxShadow: hover ? T.shadowMd : T.cardShadow,
+        transform: hover ? "translateY(-4px) scale(1.01)" : "none",
+        transition:"all 0.22s cubic-bezier(0.4,0,0.2,1)",
         outline:"none",
         display:"flex",
         flexDirection:"column",
+        position:"relative",
       }}
     >
+      {/* Tag badge - positioned absolute */}
       {p.tag && (
-        <p style={{fontSize:"10px",color:T.blue,fontWeight:"600",marginBottom:"8px",letterSpacing:"0.04em"}}>
-          {p.hot ? "🔥 " : ""}{p.tag}
-        </p>
+        <div style={{
+          position:"absolute",
+          top:"10px",
+          left:"10px",
+          zIndex:2,
+          display:"flex",
+          alignItems:"center",
+          gap:"4px",
+          background: p.hot ? `linear-gradient(135deg, #FF6B35, #F7931E)` : T.blueLight,
+          color: p.hot ? "#fff" : T.blue,
+          fontSize:"9px",
+          fontWeight:"700",
+          padding:"4px 8px",
+          borderRadius:R.full,
+          letterSpacing:"0.03em",
+          boxShadow: p.hot ? `0 2px 8px rgba(255,107,53,0.35)` : T.shadowXs,
+        }}>
+          {p.tag}
+        </div>
       )}
 
+      {/* Product image area */}
       <div style={{
-        background:`linear-gradient(165deg, ${T.surfaceAlt}, ${T.surface})`,
+        background:`linear-gradient(168deg, ${T.surfaceAlt} 0%, #F9FAFC 100%)`,
         borderRadius:R.md,
-        height:"108px", display:"flex",
-        alignItems:"center", justifyContent:"center",
-        fontSize:"56px", marginBottom:"12px",
+        height:"100px", 
+        display:"flex",
+        alignItems:"center", 
+        justifyContent:"center",
+        fontSize:"52px", 
+        marginBottom:"14px",
         border:`1px solid ${T.lineLight}`,
-      }}>{p.emoji}</div>
+        position:"relative",
+      }}>
+        <span style={{
+          transform: hover ? "scale(1.08)" : "scale(1)",
+          transition:"transform 0.25s ease",
+        }}>{p.emoji}</span>
+        
+        {/* Discount badge */}
+        {discountPct > 0 && (
+          <div style={{
+            position:"absolute",
+            top:"8px",
+            right:"8px",
+            background:`linear-gradient(135deg, ${T.accent}, #6D28D9)`,
+            color:"#fff",
+            fontSize:"10px",
+            fontWeight:"800",
+            padding:"3px 7px",
+            borderRadius:R.sm,
+            boxShadow:`0 2px 6px ${T.accent}40`,
+          }}>-{discountPct}%</div>
+        )}
+      </div>
 
+      {/* Add button */}
       <div style={{
-        width:"100%", background:`linear-gradient(145deg, ${T.blue}, ${T.blueDeep})`,
+        width:"100%", 
+        background:`linear-gradient(145deg, ${T.blue} 0%, ${T.blueDeep} 100%)`,
         color:"#fff",
         borderRadius:R.full,
-        padding:"10px", fontSize:"13px", fontWeight:"600",
-        display:"flex", alignItems:"center",
-        justifyContent:"center", gap:"6px", marginBottom:"12px",
-        boxShadow:`0 4px 14px ${T.blue}40`,
+        padding:"11px", 
+        fontSize:"13px", 
+        fontWeight:"700",
+        display:"flex", 
+        alignItems:"center",
+        justifyContent:"center", 
+        gap:"6px", 
+        marginBottom:"14px",
+        boxShadow:`0 4px 16px ${T.blue}35`,
         pointerEvents:"none",
+        letterSpacing:"0.02em",
       }}>
-        <span style={{fontSize:"16px",lineHeight:1,opacity:0.95}}>+</span> Agregar
+        <span style={{fontSize:"15px",lineHeight:1,fontWeight:"400"}}>+</span> 
+        Agregar
       </div>
 
-      <div style={{display:"flex",alignItems:"baseline",gap:"6px",flexWrap:"wrap",marginBottom:"4px"}}>
-        <span style={{fontFamily:"'Fraunces',serif",fontSize:"19px",fontWeight:600,color:T.ink,lineHeight:1}}>
+      {/* Price section */}
+      <div style={{
+        display:"flex",
+        alignItems:"baseline",
+        gap:"8px",
+        flexWrap:"wrap",
+        marginBottom:"6px",
+      }}>
+        <span style={{
+          fontFamily:"'Fraunces',serif",
+          fontSize:"20px",
+          fontWeight:"600",
+          color:T.ink,
+          lineHeight:1,
+          fontStyle:"italic",
+        }}>
           {mxn(p.price)}
         </span>
-        {saved>0 && <span style={{fontSize:"11px",color:T.ghost,textDecoration:"line-through"}}>{mxn(p.orig)}</span>}
+        {saved > 0 && (
+          <span style={{
+            fontSize:"11px",
+            color:T.ghost,
+            textDecoration:"line-through",
+            fontWeight:"400",
+          }}>{mxn(p.orig)}</span>
+        )}
       </div>
 
-      {saved>0 && (
+      {/* Savings badge */}
+      {saved > 0 && (
         <div style={{
-          display:"inline-flex",alignItems:"center",
-          background:T.greenBg, color:T.green,
-          fontSize:"10px",fontWeight:"600",
-          padding:"3px 8px",borderRadius:R.full,
-          marginBottom:"6px",
+          display:"inline-flex",
+          alignItems:"center",
+          background:T.accentBg, 
+          color:T.accent,
+          fontSize:"10px",
+          fontWeight:"700",
+          padding:"4px 10px",
+          borderRadius:R.full,
+          marginBottom:"8px",
           width:"fit-content",
-        }}>Ahorra {mxn(saved)}</div>
+          border:`1px solid ${T.accent}18`,
+        }}>
+          Ahorras {mxn(saved)}
+        </div>
       )}
 
-      <p style={{fontSize:"11px",color:T.sub,marginBottom:"4px",fontWeight:"500"}}>{p.brand}</p>
-      <p style={{fontSize:"10px",color:T.blue,fontWeight:"600",lineHeight:1.35}}>
-        💳 {mxn(p.price/12)}/mes · hasta 12 MSI
-      </p>
-      <p style={{fontSize:"10px",color:T.green,fontWeight:"600",marginTop:"4px",lineHeight:1.35}}>
-        ✦ Llévalo hoy, paga después
-      </p>
+      {/* Brand */}
+      <p style={{
+        fontSize:"11px",
+        color:T.sub,
+        marginBottom:"6px",
+        fontWeight:"500",
+      }}>{p.brand}</p>
+      
+      {/* Payment options */}
+      <div style={{
+        display:"flex",
+        flexDirection:"column",
+        gap:"3px",
+      }}>
+        <p style={{
+          fontSize:"10px",
+          color:T.blue,
+          fontWeight:"600",
+          lineHeight:1.35,
+        }}>
+          {mxn(Math.round(p.price/12))}/mes hasta 12 MSI
+        </p>
+        <p style={{
+          fontSize:"10px",
+          color:T.accent,
+          fontWeight:"600",
+          lineHeight:1.35,
+          display:"flex",
+          alignItems:"center",
+          gap:"3px",
+        }}>
+          <Spark size={8} color={T.accent}/>
+          Llevalo hoy, paga despues
+        </p>
+      </div>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════════
    SCREEN: DEPARTAMENTOS
-═══════════════════════════════════════════════════════════════ */
+══════════════════════════��════════════════════════════════════ */
 const DEPTOS = [
   { name:"Abarrotes",               emoji:"🧺" },
   { name:"Lácteos",                 emoji:"🥛" },
@@ -827,8 +1280,8 @@ function CreditHubScreen({ onBack, onSolicitar, linkedLenders=[] }) {
 
   // Simulated health score based on payment history
   const healthScore = linkedLenders.length === 0 ? null
-    : linkedLenders.length === 1 ? {label:"Excelente", icon:"🟢", sub:"Todos tus pagos al día", color:"#7C3AED"}
-    : {label:"Muy bueno",  icon:"🟡", sub:"Sigue así para mejorar tu línea", color:T.blueDeep};
+    : linkedLenders.length === 1 ? {label:"Excelente", icon:"🟢", sub:"Todos tus pagos al dia", color:T.accent}
+    : {label:"Muy bueno",  icon:"🟡", sub:"Sigue asi para mejorar tu linea", color:T.blueDeep};
 
   // Mock payment history per lender
   const MOCK_HISTORY = {
@@ -840,25 +1293,66 @@ function CreditHubScreen({ onBack, onSolicitar, linkedLenders=[] }) {
   return (
     <div style={{display:"flex",flexDirection:"column",flex:1,overflow:"hidden",background:T.bg}}>
 
-      {/* Header */}
+      {/* Header — Optimizado */}
       <div style={{
-        background:`linear-gradient(160deg,${T.blueInk} 0%,#1a2e6e 60%,#7C3AED 100%)`,
-        padding:"0 0 24px",flexShrink:0,position:"relative",overflow:"hidden",
+        background:`linear-gradient(165deg,${T.blueInk} 0%,#1a2e6e 55%,${T.accent} 100%)`,
+        padding:"0 0 28px",
+        flexShrink:0,
+        position:"relative",
+        overflow:"hidden",
       }}>
-        <div style={{position:"absolute",top:-40,right:-30,width:160,height:160,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}}/>
-        <div style={{padding:"14px 20px 0",display:"flex",alignItems:"center",gap:12}}>
-          <button onClick={onBack} style={{width:36,height:36,borderRadius:"50%",background:"rgba(255,255,255,0.12)",border:"none",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"#fff",flexShrink:0}}><ChevLeft/></button>
-          <span style={{fontSize:15,fontWeight:700,color:"#fff"}}>Crédito Cashri</span>
+        {/* Decorative elements */}
+        <div style={{position:"absolute",top:-45,right:-35,width:180,height:180,borderRadius:"50%",background:"rgba(255,255,255,0.04)"}}/>
+        <div style={{position:"absolute",bottom:-20,left:"10%",width:100,height:100,borderRadius:"50%",background:`${T.yellow}12`}}/>
+        
+        <div style={{padding:"16px 18px 0",display:"flex",alignItems:"center",gap:12}}>
+          <button 
+            onClick={onBack} 
+            aria-label="Volver"
+            style={{
+              width:40,
+              height:40,
+              borderRadius:"50%",
+              background:"rgba(255,255,255,0.1)",
+              border:"1.5px solid rgba(255,255,255,0.15)",
+              display:"flex",
+              alignItems:"center",
+              justifyContent:"center",
+              cursor:"pointer",
+              color:"#fff",
+              flexShrink:0,
+              transition:"all 0.15s ease",
+            }}
+          ><ChevLeft/></button>
+          <span style={{fontSize:16,fontWeight:700,color:"#fff",letterSpacing:"0.01em"}}>Credito Cashri</span>
         </div>
-        <div style={{padding:"16px 24px 0"}}>
-          <div style={{display:"inline-flex",alignItems:"center",gap:6,background:"rgba(255,255,255,0.1)",borderRadius:R.full,padding:"3px 10px",marginBottom:10}}>
-            <Spark size={9} color={T.yellow}/>
-            <span style={{fontSize:9,color:T.yellow,fontWeight:700,letterSpacing:"1.2px"}}>SIN TARJETA · SIN BANCO</span>
+        
+        <div style={{padding:"18px 22px 0",position:"relative",zIndex:1}}>
+          <div style={{
+            display:"inline-flex",
+            alignItems:"center",
+            gap:7,
+            background:"rgba(255,255,255,0.1)",
+            borderRadius:R.full,
+            padding:"5px 12px",
+            marginBottom:12,
+            border:"1px solid rgba(255,255,255,0.1)",
+          }}>
+            <Spark size={10} color={T.yellow}/>
+            <span style={{fontSize:9,color:T.yellow,fontWeight:700,letterSpacing:"1.4px"}}>SIN TARJETA · SIN BANCO</span>
           </div>
-          <p style={{fontFamily:"'Fraunces',serif",fontSize:24,fontStyle:"italic",color:"#fff",lineHeight:1.2,marginBottom:6}}>
-            Llévalo hoy.<br/>Págalo a tu ritmo.
+          <p style={{
+            fontFamily:"'Fraunces',serif",
+            fontSize:26,
+            fontStyle:"italic",
+            color:"#fff",
+            lineHeight:1.2,
+            marginBottom:8,
+            fontWeight:500,
+          }}>
+            Llevalo hoy.<br/>Pagalo a tu ritmo.
           </p>
-          <p style={{fontSize:12,color:"rgba(255,255,255,0.6)"}}>De $0 a $30,000 · hasta 24 plazos</p>
+          <p style={{fontSize:13,color:"rgba(255,255,255,0.55)",lineHeight:1.4}}>De $0 a $30,000 · hasta 24 plazos</p>
         </div>
       </div>
 
@@ -877,23 +1371,45 @@ function CreditHubScreen({ onBack, onSolicitar, linkedLenders=[] }) {
             </div>
           )}
 
-          {/* ── Health score ── */}
+          {/* ── Health score — Optimizado ── */}
           {healthScore && (
             <div style={{
-              background:T.surface,borderRadius:14,
-              padding:"13px 16px",border:`1px solid ${T.line}`,
-              display:"flex",alignItems:"center",gap:12,
-              boxShadow:"0 1px 4px rgba(0,0,0,0.04)",
+              background:T.surface,
+              borderRadius:R.lg,
+              padding:"16px",
+              border:`1px solid ${T.line}`,
+              display:"flex",
+              alignItems:"center",
+              gap:14,
+              boxShadow:T.cardShadow,
             }}>
-              <div style={{width:44,height:44,borderRadius:"50%",flexShrink:0,background:`${healthScore.color}12`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22}}>
+              <div style={{
+                width:48,
+                height:48,
+                borderRadius:"50%",
+                flexShrink:0,
+                background:`linear-gradient(135deg, ${healthScore.color}15, ${healthScore.color}08)`,
+                border:`2px solid ${healthScore.color}25`,
+                display:"flex",
+                alignItems:"center",
+                justifyContent:"center",
+                fontSize:22,
+              }}>
                 {healthScore.icon}
               </div>
               <div style={{flex:1}}>
-                <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:2}}>
-                  <p style={{fontSize:13,fontWeight:700,color:T.ink}}>Salud crediticia</p>
-                  <span style={{fontSize:11,fontWeight:700,color:healthScore.color}}>{healthScore.label}</span>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+                  <p style={{fontSize:14,fontWeight:700,color:T.ink}}>Salud crediticia</p>
+                  <span style={{
+                    fontSize:11,
+                    fontWeight:700,
+                    color:healthScore.color,
+                    background:`${healthScore.color}12`,
+                    padding:"2px 8px",
+                    borderRadius:R.full,
+                  }}>{healthScore.label}</span>
                 </div>
-                <p style={{fontSize:11,color:T.sub}}>{healthScore.sub}</p>
+                <p style={{fontSize:12,color:T.sub,lineHeight:1.4}}>{healthScore.sub}</p>
               </div>
             </div>
           )}
@@ -1172,8 +1688,8 @@ function CuentaScreen({ onCreditLanding }) {
   const menuItems = [
     { icon:"📦", label:"Pedidos",         sub:"Rastrea, devuelve o revisa tickets" },
     { icon:"📍", label:"Mis direcciones", sub:"Gestiona tus domicilios de entrega" },
-    { icon:"💳", label:"Métodos de pago", sub:"Tarjetas y medios guardados" },
-    { icon:"✦",  label:"Mi crédito Cashri",sub:"Líneas activas y solicitudes", onTap: onCreditLanding },
+    { icon:"💳", label:"Metodos de pago", sub:"Tarjetas y medios guardados" },
+    { icon:"✦",  label:"Mi credito Cashri",sub:"Lineas activas y solicitudes", onTap: onCreditLanding, highlight: true },
     { icon:"🎁", label:"Referidos",        sub:"Invita y gana $100 por amigo" },
     { icon:"🔔", label:"Notificaciones",  sub:"Preferencias de avisos" },
     { icon:"🔒", label:"Privacidad",      sub:"Datos y permisos" },
@@ -1183,13 +1699,28 @@ function CuentaScreen({ onCreditLanding }) {
   return (
     <div style={{display:"flex",flexDirection:"column",flex:1,overflow:"hidden",background:T.bg}}>
 
-      {/* Header */}
+      {/* Header — Optimizado */}
       <div style={{
-        background:`linear-gradient(135deg,${T.blueInk},${T.blueMid})`,
-        padding:"14px 20px 16px", flexShrink:0,
-        display:"flex", alignItems:"center", gap:12,
+        background:`linear-gradient(140deg,${T.blueInk},${T.blueMid})`,
+        padding:"16px 18px", 
+        flexShrink:0,
+        display:"flex", 
+        alignItems:"center", 
+        gap:12,
+        boxShadow:`0 2px 12px ${T.blueInk}20`,
       }}>
-        <div style={{flex:1,background:"rgba(255,255,255,0.12)",borderRadius:R.full,padding:"8px 14px",fontSize:13,color:"rgba(255,255,255,0.6)",display:"flex",alignItems:"center",gap:8}}>
+        <div style={{
+          flex:1,
+          background:"rgba(255,255,255,0.1)",
+          borderRadius:R.full,
+          padding:"10px 16px",
+          fontSize:13,
+          color:"rgba(255,255,255,0.55)",
+          display:"flex",
+          alignItems:"center",
+          gap:10,
+          border:"1px solid rgba(255,255,255,0.1)",
+        }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           Buscar en NovaMart
         </div>
@@ -1197,17 +1728,29 @@ function CuentaScreen({ onCreditLanding }) {
 
       <div style={{flex:1,overflowY:"auto",minHeight:0,WebkitOverflowScrolling:"touch"}}>
 
-        {/* Hero — Nova Pass style */}
-        <div style={{background:"#fff",padding:"24px 20px 20px",textAlign:"center",borderBottom:`1px solid ${T.lineLight}`}}>
+        {/* Hero — Nova Pass style — Optimizado */}
+        <div style={{
+          background:"#fff",
+          padding:"28px 20px 24px",
+          textAlign:"center",
+          borderBottom:`1px solid ${T.lineLight}`,
+        }}>
           {/* NP logo */}
-          <div style={{display:"inline-flex",alignItems:"center",gap:4,marginBottom:10}}>
-            <span style={{fontFamily:"'Fraunces',serif",fontSize:20,fontWeight:800,color:T.blue,fontStyle:"italic"}}>Nova</span>
+          <div style={{display:"inline-flex",alignItems:"center",gap:5,marginBottom:12}}>
+            <span style={{fontFamily:"'Fraunces',serif",fontSize:22,fontWeight:700,color:T.blue,fontStyle:"italic"}}>Nova</span>
             <div style={{display:"flex",flexDirection:"column",alignItems:"flex-start",lineHeight:1}}>
-              <span style={{fontFamily:"'Fraunces',serif",fontSize:18,fontWeight:800,color:T.yellow,fontStyle:"italic"}}>Pass</span>
+              <span style={{fontFamily:"'Fraunces',serif",fontSize:20,fontWeight:700,color:T.yellow,fontStyle:"italic"}}>Pass</span>
               <Spark size={10} color={T.yellow}/>
             </div>
           </div>
-          <p style={{fontFamily:"'Fraunces',serif",fontSize:28,fontStyle:"italic",color:T.ink,lineHeight:1.15}}>
+          <p style={{
+            fontFamily:"'Fraunces',serif",
+            fontSize:30,
+            fontStyle:"italic",
+            color:T.ink,
+            lineHeight:1.15,
+            fontWeight:500,
+          }}>
             Hola, Ma. Fernanda
           </p>
         </div>
@@ -1269,40 +1812,75 @@ function CuentaScreen({ onCreditLanding }) {
             </div>
           </div>
 
-          {/* Menu items */}
-          <div style={{background:T.surface,borderRadius:14,overflow:"hidden",border:`1px solid ${T.line}`,boxShadow:"0 1px 4px rgba(0,0,0,0.04)"}}>
+          {/* Menu items — Optimizado */}
+          <div style={{
+            background:T.surface,
+            borderRadius:R.lg,
+            overflow:"hidden",
+            border:`1px solid ${T.line}`,
+            boxShadow:T.cardShadow,
+          }}>
             {menuItems.map((item,i)=>(
               <div
                 key={i}
                 onClick={item.onTap}
+                role={item.onTap ? "button" : undefined}
+                tabIndex={item.onTap ? 0 : undefined}
+                onKeyDown={item.onTap ? e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); item.onTap(); }} : undefined}
                 style={{
-                  display:"flex",alignItems:"center",gap:14,
-                  padding:"13px 16px",
-                  borderBottom:i<menuItems.length-1?`1px solid ${T.lineLight}`:"none",
-                  cursor:item.onTap?"pointer":"default",
+                  display:"flex",
+                  alignItems:"center",
+                  gap:14,
+                  padding:"14px 16px",
+                  borderBottom:i<menuItems.length-1 ? `1px solid ${T.lineLight}` : "none",
+                  cursor:item.onTap ? "pointer" : "default",
+                  background: item.highlight ? `${T.accent}04` : "transparent",
+                  transition:"background 0.15s ease",
                 }}
               >
-                <div style={{width:36,height:36,borderRadius:9,flexShrink:0,background:item.icon==="✦"?`#7C3AED10`:`${T.blue}0C`,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <div style={{
+                  width:40,
+                  height:40,
+                  borderRadius:R.sm,
+                  flexShrink:0,
+                  background: item.highlight ? `${T.accent}12` : `${T.blue}08`,
+                  border: item.highlight ? `1px solid ${T.accent}20` : "none",
+                  display:"flex",
+                  alignItems:"center",
+                  justifyContent:"center",
+                }}>
                   {item.icon==="✦"
-                    ? <Spark size={14} color="#7C3AED"/>
-                    : <span style={{fontSize:17}}>{item.icon}</span>
+                    ? <Spark size={16} color={T.accent}/>
+                    : <span style={{fontSize:18}}>{item.icon}</span>
                   }
                 </div>
                 <div style={{flex:1,minWidth:0}}>
-                  <p style={{fontSize:13,fontWeight:700,color:item.icon==="✦"?"#7C3AED":T.ink,marginBottom:1}}>{item.label}</p>
-                  <p style={{fontSize:11,color:T.sub}}>{item.sub}</p>
+                  <p style={{
+                    fontSize:14,
+                    fontWeight:700,
+                    color: item.highlight ? T.accent : T.ink,
+                    marginBottom:2,
+                  }}>{item.label}</p>
+                  <p style={{fontSize:11,color:T.sub,lineHeight:1.3}}>{item.sub}</p>
                 </div>
                 <BChevRight/>
               </div>
             ))}
           </div>
 
-          {/* Sign out */}
+          {/* Sign out — Optimizado */}
           <button style={{
-            width:"100%",padding:"13px",borderRadius:12,
-            background:T.surface,border:`1px solid ${T.line}`,
-            fontSize:14,fontWeight:700,color:T.sub,cursor:"pointer",
-          }}>Cerrar sesión</button>
+            width:"100%",
+            padding:"14px",
+            borderRadius:R.md,
+            background:T.surface,
+            border:`1.5px solid ${T.line}`,
+            fontSize:14,
+            fontWeight:600,
+            color:T.sub,
+            cursor:"pointer",
+            transition:"all 0.15s ease",
+          }}>Cerrar sesion</button>
 
         </div>
       </div>
@@ -1376,26 +1954,51 @@ function MisProductosScreen({ onProduct }) {
 ═══════════════════════════════════════════════════════════════ */
 function DetailScreen({ p, onBack, onBuy, onCashriOnboarding }) {
   const saved = p.orig - p.price;
+  const discountPct = saved > 0 ? pct(p.price, p.orig) : 0;
+  const [isFav, setIsFav] = useState(false);
+  
   return (
     <div style={{background:T.bg, display:"flex", flexDirection:"column", flex:1, overflow:"hidden"}}>
 
-      {/* Header */}
+      {/* Header — Optimizado */}
       <div style={{
-        background:`linear-gradient(135deg, ${T.blueInk} 0%, ${T.blueMid} 100%)`,
-        padding:"14px 20px", flexShrink:0,
-        display:"flex", alignItems:"center", gap:"12px",
+        background:`linear-gradient(140deg, ${T.blueInk} 0%, ${T.blueMid} 100%)`,
+        padding:"14px 18px", 
+        flexShrink:0,
+        display:"flex", 
+        alignItems:"center", 
+        gap:"12px",
+        boxShadow:`0 2px 12px ${T.blueInk}25`,
       }}>
-        <button onClick={onBack} style={{
-          width:"36px",height:"36px",borderRadius:"50%",
-          background:"rgba(255,255,255,0.12)",border:"none",
-          display:"flex",alignItems:"center",justifyContent:"center",
-          cursor:"pointer",color:"#fff",
-        }}><ChevLeft/></button>
+        <button 
+          onClick={onBack} 
+          aria-label="Volver"
+          style={{
+            width:"38px",
+            height:"38px",
+            borderRadius:"50%",
+            background:"rgba(255,255,255,0.1)",
+            border:"1.5px solid rgba(255,255,255,0.15)",
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center",
+            cursor:"pointer",
+            color:"#fff",
+            flexShrink:0,
+            transition:"all 0.15s ease",
+          }}
+        ><ChevLeft/></button>
         <div style={{
-          flex:1,background:"rgba(255,255,255,0.1)",
-          borderRadius:R.full,padding:"8px 14px",
-          fontSize:"13px",color:"rgba(255,255,255,0.6)",
-          display:"flex",alignItems:"center",gap:"8px",
+          flex:1,
+          background:"rgba(255,255,255,0.08)",
+          borderRadius:R.full,
+          padding:"10px 14px",
+          fontSize:"13px",
+          color:"rgba(255,255,255,0.55)",
+          display:"flex",
+          alignItems:"center",
+          gap:"10px",
+          border:"1px solid rgba(255,255,255,0.1)",
         }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           Buscar en NovaMart
@@ -1403,80 +2006,182 @@ function DetailScreen({ p, onBack, onBuy, onCashriOnboarding }) {
       </div>
 
       {/* Scrollable content */}
-      <div style={{flex:1, overflowY:"auto"}}>
-      {/* Product image hero */}
-      <div style={{
-        background:`linear-gradient(180deg, ${T.blueInk}11 0%, ${T.bg} 100%)`,
-        height:"240px", display:"flex",
-        alignItems:"center", justifyContent:"center",
-        fontSize:"110px", position:"relative",
-      }}>
-        {p.emoji}
-        <button style={{
-          position:"absolute",top:"14px",right:"14px",
-          width:"36px",height:"36px",borderRadius:"50%",
-          background:T.surface,border:`1px solid ${T.line}`,
-          display:"flex",alignItems:"center",justifyContent:"center",
-          cursor:"pointer",fontSize:"16px",boxShadow:"0 2px 8px rgba(0,0,0,0.08)",
-        }}>♡</button>
-      </div>
-
-      <div style={{padding:"20px", display:"flex", flexDirection:"column", gap:"16px", paddingBottom:"24px"}}>
-
-        {/* Title block */}
-        <div>
-          <p style={{fontSize:"11px",color:T.blue,fontWeight:"700",marginBottom:"4px",letterSpacing:"0.5px"}}>{p.brand} · {p.cat}</p>
-          <h1 style={{
-            fontFamily:"'Fraunces',serif",
-            fontSize:"22px",color:T.ink,lineHeight:1.25,
-            marginBottom:"10px",fontStyle:"italic",
-          }}>{p.name}</h1>
-
-          {/* Price & rating row */}
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"6px"}}>
-            <div style={{display:"flex",alignItems:"baseline",gap:"8px"}}>
-              <span style={{fontSize:"26px",fontFamily:"'Fraunces',serif",fontStyle:"italic",color:T.blueDeep,lineHeight:1}}>{mxn(p.price)}</span>
-              {saved>0 && <span style={{fontSize:"14px",color:T.ghost,textDecoration:"line-through"}}>{mxn(p.orig)}</span>}
-            </div>
-            <div style={{display:"flex",alignItems:"center",gap:"5px"}}>
-              <Stars n={p.rating}/>
-              <span style={{fontSize:"12px",color:T.sub}}>({p.rev})</span>
-            </div>
-          </div>
-
-          {saved>0 && (
-            <div style={{marginTop:"6px"}}>
-              <Pill color={T.blueDeep}>Ahorras {mxn(saved)} ({pct(p.price,p.orig)}% off)</Pill>
-            </div>
+      <div style={{flex:1, overflowY:"auto", WebkitOverflowScrolling:"touch"}}>
+        
+        {/* Product image hero — Optimizado */}
+        <div style={{
+          background:`linear-gradient(180deg, ${T.blueInk}0C 0%, ${T.bg} 100%)`,
+          height:"220px", 
+          display:"flex",
+          alignItems:"center", 
+          justifyContent:"center",
+          fontSize:"100px", 
+          position:"relative",
+          padding:"20px",
+        }}>
+          <span style={{
+            filter:"drop-shadow(0 8px 24px rgba(0,0,0,0.1))",
+          }}>{p.emoji}</span>
+          
+          {/* Favorite button */}
+          <button 
+            onClick={()=>setIsFav(!isFav)}
+            aria-label={isFav ? "Quitar de favoritos" : "Agregar a favoritos"}
+            style={{
+              position:"absolute",
+              top:"14px",
+              right:"14px",
+              width:"40px",
+              height:"40px",
+              borderRadius:"50%",
+              background:T.surface,
+              border:`1.5px solid ${isFav ? T.error : T.line}`,
+              display:"flex",
+              alignItems:"center",
+              justifyContent:"center",
+              cursor:"pointer",
+              fontSize:"17px",
+              boxShadow:T.cardShadow,
+              transition:"all 0.2s ease",
+              color: isFav ? T.error : T.ghost,
+            }}
+          >{isFav ? "♥" : "♡"}</button>
+          
+          {/* Discount badge */}
+          {discountPct > 0 && (
+            <div style={{
+              position:"absolute",
+              top:"14px",
+              left:"14px",
+              background:`linear-gradient(135deg, ${T.accent}, #6D28D9)`,
+              color:"#fff",
+              fontSize:"12px",
+              fontWeight:"800",
+              padding:"6px 12px",
+              borderRadius:R.md,
+              boxShadow:`0 3px 10px ${T.accent}40`,
+              letterSpacing:"0.02em",
+            }}>-{discountPct}%</div>
           )}
         </div>
 
-        {/* ── Tarjeta MSI — producto bancario ── */}
+        <div style={{padding:"22px 18px", display:"flex", flexDirection:"column", gap:"18px", paddingBottom:"28px"}}>
+
+          {/* Title block — Optimizado */}
+          <div>
+            <p style={{
+              fontSize:"11px",
+              color:T.blue,
+              fontWeight:"700",
+              marginBottom:"6px",
+              letterSpacing:"0.5px",
+              textTransform:"uppercase",
+            }}>{p.brand} · {p.cat}</p>
+            <h1 style={{
+              fontFamily:"'Fraunces',serif",
+              fontSize:"24px",
+              color:T.ink,
+              lineHeight:1.25,
+              marginBottom:"12px",
+              fontStyle:"italic",
+              fontWeight:"500",
+            }}>{p.name}</h1>
+
+            {/* Price & rating row */}
+            <div style={{
+              display:"flex",
+              alignItems:"center",
+              justifyContent:"space-between",
+              flexWrap:"wrap",
+              gap:"8px",
+            }}>
+              <div style={{display:"flex",alignItems:"baseline",gap:"10px"}}>
+                <span style={{
+                  fontSize:"28px",
+                  fontFamily:"'Fraunces',serif",
+                  fontStyle:"italic",
+                  color:T.blueDeep,
+                  lineHeight:1,
+                  fontWeight:"600",
+                }}>{mxn(p.price)}</span>
+                {saved > 0 && (
+                  <span style={{
+                    fontSize:"14px",
+                    color:T.ghost,
+                    textDecoration:"line-through",
+                  }}>{mxn(p.orig)}</span>
+                )}
+              </div>
+              <div style={{
+                display:"flex",
+                alignItems:"center",
+                gap:"6px",
+                background:T.surfaceAlt,
+                padding:"6px 10px",
+                borderRadius:R.full,
+                border:`1px solid ${T.line}`,
+              }}>
+                <Stars n={p.rating}/>
+                <span style={{fontSize:"12px",color:T.sub,fontWeight:"500"}}>({p.rev})</span>
+              </div>
+            </div>
+
+            {saved > 0 && (
+              <div style={{marginTop:"10px"}}>
+                <Pill color={T.accent}>Ahorras {mxn(saved)} ({discountPct}% off)</Pill>
+              </div>
+            )}
+          </div>
+
+        {/* ── Tarjeta MSI — producto bancario — Optimizado ── */}
         <div style={{
-          background:`linear-gradient(135deg, ${T.blue}0A 0%, ${T.blueDeep}0A 100%)`,
-          border:`1.5px solid ${T.blue}22`,
-          borderRadius:R.lg, padding:"12px 14px",
-          display:"flex", alignItems:"center", gap:"12px",
+          background:`linear-gradient(140deg, ${T.blueLight} 0%, #F0F7FF 100%)`,
+          border:`1.5px solid ${T.blue}18`,
+          borderRadius:R.lg, 
+          padding:"14px 16px",
+          display:"flex", 
+          alignItems:"center", 
+          gap:"14px",
+          boxShadow:`0 2px 8px ${T.blue}08`,
         }}>
           <div style={{
-            width:"38px",height:"38px",borderRadius:R.md,
-            background:`linear-gradient(135deg, ${T.blue}, ${T.blueDeep})`,
-            display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
+            width:"42px",
+            height:"42px",
+            borderRadius:R.md,
+            background:`linear-gradient(140deg, ${T.blue} 0%, ${T.blueDeep} 100%)`,
+            display:"flex",
+            alignItems:"center",
+            justifyContent:"center",
+            flexShrink:0,
+            boxShadow:`0 3px 10px ${T.blue}30`,
           }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           </div>
-          <div style={{flex:1}}>
-            <p style={{fontSize:"13px",fontWeight:"700",color:T.ink,marginBottom:"1px"}}>
+          <div style={{flex:1,minWidth:0}}>
+            <p style={{
+              fontSize:"13px",
+              fontWeight:"700",
+              color:T.ink,
+              marginBottom:"3px",
+            }}>
               Hasta 12 meses sin intereses
             </p>
-            <p style={{fontSize:"11px",color:T.sub}}>
-              Con tarjetas bancarias participantes · desde <span style={{color:T.blue,fontWeight:"700"}}>{mxn(p.price/12)}/mes</span>
+            <p style={{fontSize:"11px",color:T.sub,lineHeight:1.4}}>
+              Tarjetas participantes · desde <span style={{color:T.blue,fontWeight:"700"}}>{mxn(Math.round(p.price/12))}/mes</span>
             </p>
           </div>
-          <span style={{fontSize:"11px",color:T.blue,fontWeight:"600",whiteSpace:"nowrap",cursor:"pointer"}}>Ver →</span>
+          <div style={{
+            padding:"6px 10px",
+            background:T.surface,
+            borderRadius:R.sm,
+            border:`1px solid ${T.blue}20`,
+            cursor:"pointer",
+          }}>
+            <span style={{fontSize:"11px",color:T.blue,fontWeight:"700"}}>Ver</span>
+          </div>
         </div>
 
-        {/* ── Sin tarjeta de crédito — línea Cashri ── */}
+        {/* ── Sin tarjeta de credito — linea Cashri — Optimizado ── */}
         {(()=>{
           // Cheapest installment across all lenders (max plazos, lowest rate plan)
           const bestPlan = BNPL_LENDERS.reduce((best, l) => {
@@ -1487,72 +2192,146 @@ function DetailScreen({ p, onBack, onBuy, onCashriOnboarding }) {
           return (
             <div
               onClick={onCashriOnboarding}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); onCashriOnboarding(); } }}
               style={{
-                background:`linear-gradient(135deg, #7C3AED08, #7C3AED04)`,
-                border:`1.5px solid #7C3AED22`,
-                borderRadius:R.lg, padding:"12px 14px",
-                display:"flex", alignItems:"center", gap:"12px",
+                background:`linear-gradient(140deg, ${T.accentBg} 0%, #FAF5FF 100%)`,
+                border:`1.5px solid ${T.accent}20`,
+                borderRadius:R.lg, 
+                padding:"14px 16px",
+                display:"flex", 
+                alignItems:"center", 
+                gap:"14px",
                 cursor:"pointer",
+                boxShadow:`0 2px 8px ${T.accent}08`,
+                transition:"all 0.2s ease",
               }}>
               <div style={{
-                width:"38px",height:"38px",borderRadius:R.md,
-                background:"linear-gradient(135deg, #7C3AED, #5B21B6)",
-                display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
+                width:"42px",
+                height:"42px",
+                borderRadius:R.md,
+                background:"linear-gradient(140deg, #7C3AED 0%, #5B21B6 100%)",
+                display:"flex",
+                alignItems:"center",
+                justifyContent:"center",
+                flexShrink:0,
+                boxShadow:`0 3px 10px ${T.accent}35`,
               }}>
-                <Spark size={18} color="rgba(255,255,255,0.92)"/>
+                <Spark size={18} color="rgba(255,255,255,0.95)"/>
               </div>
-              <div style={{flex:1}}>
-                <p style={{fontSize:"13px",fontWeight:"700",color:T.ink,marginBottom:"3px"}}>
-                  Llévalo hoy, sin tarjeta
-                </p>
-                <p style={{fontSize:"12px",color:"#7C3AED",fontWeight:"700",marginBottom:"1px"}}>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"4px"}}>
+                  <p style={{
+                    fontSize:"13px",
+                    fontWeight:"700",
+                    color:T.ink,
+                  }}>
+                    Llevalo hoy, sin tarjeta
+                  </p>
+                  <span style={{
+                    fontSize:"8px",
+                    fontWeight:"800",
+                    background:T.accent,
+                    color:"#fff",
+                    padding:"2px 6px",
+                    borderRadius:R.full,
+                    letterSpacing:"0.5px",
+                  }}>NUEVO</span>
+                </div>
+                <p style={{
+                  fontSize:"13px",
+                  color:T.accent,
+                  fontWeight:"700",
+                  marginBottom:"2px",
+                }}>
                   Desde {mxn(Math.ceil(bestPlan.pmt))} por {bestPlan.label}
                 </p>
-                <p style={{fontSize:"10px",color:T.sub}}>
-                  Hasta {bestPlan.n} {bestPlan.label}s · sin banco ni trámites
+                <p style={{fontSize:"10px",color:T.sub,lineHeight:1.4}}>
+                  Hasta {bestPlan.n} {bestPlan.label}s · sin banco ni tramites
                 </p>
               </div>
-              <span style={{fontSize:"11px",color:"#7C3AED",fontWeight:"700",whiteSpace:"nowrap"}}>Activar →</span>
+              <div style={{
+                padding:"6px 10px",
+                background:T.accent,
+                borderRadius:R.sm,
+                boxShadow:`0 2px 6px ${T.accent}40`,
+              }}>
+                <span style={{fontSize:"11px",color:"#fff",fontWeight:"700"}}>Activar</span>
+              </div>
             </div>
           );
         })()}
 
-        {/* Badges row */}
-        <div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
-          <Badge bg={T.yellow+"22"} color={T.blueInk}>↓ Rebaja</Badge>
-          <Badge bg="#EFF6FF" color={T.blue}>💳 12 MSI</Badge>
-          <Badge bg={`${T.blueDeep}10`} color={T.blueDeep}>✦ Sin TDC</Badge>
-          <Badge bg={`${T.blue}12`} color={T.blue}>🚚 24 hrs</Badge>
+        {/* Badges row — Optimizado */}
+        <div style={{display:"flex",gap:"8px",flexWrap:"wrap"}}>
+          <Badge bg={T.yellowLight} color={T.blueInk} size="md">Rebaja</Badge>
+          <Badge bg={T.blueLight} color={T.blue} size="md">12 MSI</Badge>
+          <Badge bg={T.accentBg} color={T.accent} size="md">Sin TDC</Badge>
+          <Badge bg={T.successBg} color={T.success} size="md">24 hrs</Badge>
         </div>
 
-        {/* Thumbnail strip */}
-        <div style={{display:"flex",gap:"8px"}}>
+        {/* Thumbnail strip — Optimizado */}
+        <div style={{display:"flex",gap:"10px"}}>
           {[true,false,false,false].map((sel,i)=>(
-            <div key={i} style={{
-              width:"64px",height:"64px",borderRadius:R.md,
-              background:T.surfaceAlt,
-              border:`2px solid ${sel?T.blue:T.line}`,
-              display:"flex",alignItems:"center",justifyContent:"center",
-              fontSize:"28px",cursor:"pointer",
-            }}>{p.emoji}</div>
+            <button 
+              key={i} 
+              type="button"
+              aria-label={`Vista ${i + 1} del producto`}
+              aria-pressed={sel}
+              style={{
+                width:"60px",
+                height:"60px",
+                borderRadius:R.md,
+                background:T.surfaceAlt,
+                border:`2px solid ${sel ? T.blue : T.line}`,
+                display:"flex",
+                alignItems:"center",
+                justifyContent:"center",
+                fontSize:"26px",
+                cursor:"pointer",
+                transition:"all 0.15s ease",
+                boxShadow: sel ? `0 0 0 3px ${T.blue}15` : "none",
+              }}
+            >{p.emoji}</button>
           ))}
         </div>
 
-        {/* Delivery info */}
-        <div style={{background:T.surface,borderRadius:R.lg,padding:"14px 16px",border:`1px solid ${T.line}`}}>
+        {/* Delivery info — Optimizado */}
+        <div style={{
+          background:T.surface,
+          borderRadius:R.lg,
+          padding:"16px",
+          border:`1px solid ${T.line}`,
+          boxShadow:T.cardShadow,
+        }}>
           {[
-            {icon:"🚚",text:"Entrega estimada el",bold:"sáb. 21 de mar"},
-            {icon:"✦", text:"Vendido y enviado por",bold:"NovaMart"},
-            {icon:"↩️",text:"Devolución gratuita hasta",bold:"30 días"},
+            {icon:"🚚",text:"Entrega estimada el",bold:"sab. 21 de mar", iconBg:T.successBg},
+            {icon:"✦", text:"Vendido y enviado por",bold:"NovaMart", iconBg:T.blueLight, useSpark:true},
+            {icon:"↩️",text:"Devolucion gratuita hasta",bold:"30 dias", iconBg:T.warningBg},
           ].map((r,i)=>(
             <div key={i} style={{
-              display:"flex",alignItems:"flex-start",gap:"10px",
-              padding:"8px 0",
-              borderBottom:i<2?`1px solid ${T.lineLight}`:"none",
+              display:"flex",
+              alignItems:"center",
+              gap:"12px",
+              padding:"10px 0",
+              borderBottom:i<2 ? `1px solid ${T.lineLight}` : "none",
             }}>
-              <span style={{fontSize:"14px",lineHeight:"20px"}}>{r.icon}</span>
-              <span style={{fontSize:"13px",color:T.body,lineHeight:1.45}}>
-                {r.text} <strong style={{color:T.ink}}>{r.bold}</strong>
+              <div style={{
+                width:"32px",
+                height:"32px",
+                borderRadius:R.sm,
+                background:r.iconBg,
+                display:"flex",
+                alignItems:"center",
+                justifyContent:"center",
+                fontSize:"14px",
+                flexShrink:0,
+              }}>
+                {r.useSpark ? <Spark size={12} color={T.blue}/> : r.icon}
+              </div>
+              <span style={{fontSize:"13px",color:T.body,lineHeight:1.45,flex:1}}>
+                {r.text} <strong style={{color:T.ink,fontWeight:"600"}}>{r.bold}</strong>
               </span>
             </div>
           ))}
@@ -1611,7 +2390,7 @@ function AddressScreen({ onBack, onContinue }) {
           cursor:"pointer",marginBottom:"16px",
         }}>
           <div style={{width:"36px",height:"36px",borderRadius:"50%",background:`${T.blue}12`,display:"flex",alignItems:"center",justifyContent:"center",color:T.blue,fontSize:"18px",flexShrink:0}}>+</div>
-          <span style={{fontSize:"14px",color:T.blue,fontWeight:"600"}}>Agregar nueva dirección</span>
+          <span style={{fontSize:"14px",color:T.blue,fontWeight:"600"}}>Agregar nueva direcci��n</span>
         </button>
 
         {/* Address list */}
@@ -2570,7 +3349,7 @@ function LinkedScreen({ lender, avail, onBack, onShop, onLinked }) {
 
 /* ═══════════════════════════════════════════════════════════════
    SCREEN: EXISTING CREDIT
-═══════════════════════════════════════════════════════════════ */
+════════════════════════════════════���══════════════════════════ */
 function ExistingCreditScreen({ onBack, onShop, onLinked }) {
   const { lender, line, used, since } = EXISTING_CREDIT;
   const avail = line - used;
