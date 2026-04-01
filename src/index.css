@@ -1,0 +1,20 @@
+/* App frame: mobile shell centers in bnpl-ecommerce.jsx (max-width 390px) */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: #dfe6f2;
+}
+
+#root {
+  width: 100%;
+  min-height: 100dvh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  box-sizing: border-box;
+}
