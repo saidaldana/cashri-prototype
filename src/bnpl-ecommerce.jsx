@@ -96,9 +96,9 @@ const PRODUCTS = [
 ];
 
 const ADDRESSES = [
-  { id:1, name:"Said Aldana",         addr:"Nayarit 23, Col. Narvarte, CDMX 10700"        },
-  { id:2, name:"Said Rodrigo Aldana", addr:"Francia 213, Col. San Pedro, CDMX 01030"      },
-  { id:3, name:"Ma. Esperanza P.",    addr:"Periférico 3580, Col. Insurgentes, CDMX 01900" },
+  { id:1, name:"Ma. Fernanda",        addr:"Nayarit 23, Col. Narvarte, CDMX 10700"        },
+  { id:2, name:"Ma. Fernanda G.",     addr:"Francia 213, Col. San Pedro, CDMX 01030"      },
+  { id:3, name:"Ma. Esperanza P.",    addr:"Periferico 3580, Col. Insurgentes, CDMX 01900" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -567,7 +567,7 @@ function HomeScreen({ onProduct, onCreditLanding, totalCredit, cartCount }) {
               letterSpacing:"0.4px",
               fontWeight:"500",
             }}>
-              Hola, Said
+              Hola, Ma. Fernanda
             </p>
             <div style={{display:"flex", alignItems:"center", gap:"7px"}}>
               <span style={{
@@ -1210,7 +1210,7 @@ const MOCK_DEBT = {
 const HOW_STEPS = [
   { icon:"📲", title:"Solicita en minutos",  body:"Llena un formulario rápido. Sin papeleos ni banco." },
   { icon:"✅", title:"Recibe tu línea",       body:"Validamos con lenders y te mostramos tu oferta." },
-  { icon:"🛒", title:"Compra cualquier cosa", body:"Úsalo en NovaSuper, DepóMax, ClubPlus y online." },
+  { icon:"��", title:"Compra cualquier cosa", body:"Úsalo en NovaSuper, DepóMax, ClubPlus y online." },
   { icon:"📅", title:"Paga a tu ritmo",       body:"Elige catorcenas, quincenas o semanas. Tú decides." },
 ];
 
